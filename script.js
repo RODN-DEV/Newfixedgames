@@ -149,3 +149,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+// --- Event Listeners and Initialization ---
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initial content and navigation setup
+    updateNavLinks();
+    navigate('home'); // Load the home view initially
+
+    // Drawer toggles
+    document.getElementById('menu-toggle').addEventListener('click', openDrawer);
+    document.getElementById('close-drawer').addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    // Password modal handlers
+    submitPasswordBtn.addEventListener('click', () => {
+        const password = passwordInput.value.trim();
+        
+        if (validPasswords.includes(password)) {
+            isAuthenticated = true;
+            passwordModal.classList.add('hidden');
+            // Navigate to the view that was blocked
+            navigate(currentView); 
+        } else {
+            passwordError.classList.remove('hidden');
+            passwordInput.value = ''; // Clear input on error
+        }
+    });
+
+    cancelPasswordBtn.addEventListener('click', () => {
+        passwordModal.classList.add('hidden');
+        // If cancelled, return to the home screen
+        currentView = 'home';
+        navigate('home');
+    });
+
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitPasswordBtn.click();
+        }
+    });
+});
