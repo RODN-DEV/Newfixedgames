@@ -32,7 +32,8 @@ const gamesData = {
             isLive: false
         }
     ],
-    topSecret: [
+    // Renamed from 'topSecret' to align with UI label 'Top Special VIP'
+    topSecret: [ 
         {
             league: "Segunda Division",
             time: "19:00",
