@@ -1,129 +1,80 @@
 /**
  * views.js
- * Contains all functions responsible for generating HTML content (views).
- * It relies on the globally available 'gamesData' object defined in data.js.
+ * Contains the functions for rendering HTML content for each view.
+ * Assumes gamesData is globally available from data.js.
+ * * Helper function to render game cards.
+ * @param {Array<Object>} games - Array of game objects.
+ * @param {string} gradientClass - Custom CSS class for the card background.
+ * @returns {string} - HTML string for the game cards.
  */
+const renderGameCards = (games, gradientClass) => {
+    return games.map(game => {
+        const statusBadgeClass = game.status === 'won' ? 'badge-won' : 
+                                 game.status === 'lost' ? 'badge-lost' : 
+                                 'badge-pending';
+        const liveIndicator = game.isLive ? `<span class="badge-live text-xs font-bold px-2 py-0.5 rounded-full mr-2">LIVE</span>` : '';
 
-// --- Utility Functions for Rendering ---
+        return `
+            <div class="game-card ${gradientClass} p-4 rounded-xl shadow-lg transform hover:scale-[1.01] transition duration-300 fade-in">
+                <div class="flex justify-between items-start mb-2 border-b border-white border-opacity-30 pb-2">
+                    <div class="flex items-center">
+                        ${liveIndicator}
+                        <span class="text-sm font-semibold text-white text-opacity-80">${game.league}</span>
+                    </div>
+                    <span class="text-xs font-bold text-white">${game.time}</span>
+                </div>
+                
+                <div class="flex justify-between items-center mb-3">
+                    <div class="text-white font-bold text-lg leading-tight">${game.teamA}</div>
+                    <div class="text-white text-opacity-80 font-bold">vs</div>
+                    <div class="text-white font-bold text-lg leading-tight text-right">${game.teamB}</div>
+                </div>
 
-/**
- * Creates the HTML markup for a single game card.
- * @param {object} game - The game object from gamesData.
- * @returns {string} HTML markup for the game card.
- */
-const createGameCard = (game) => {
-    const statusClass = `badge-${game.status}`;
-    const scoreDisplay = game.score ? `<span class="text-sm font-semibold text-gray-700 ml-2">Score: ${game.score}</span>` : '';
-    const liveIndicator = game.isLive ? `<span class="badge-live text-xs font-bold px-2 py-0.5 rounded-full uppercase ml-2 shadow-lg">Live</span>` : '';
-    
-    return `
-        <div class="bg-white rounded-xl p-4 shadow-lg mb-4 border border-gray-200 fade-in">
-            <div class="flex justify-between items-start mb-2 border-b pb-2">
-                <div class="flex items-center">
-                    <i class="fas fa-calendar-alt text-gray-400 text-sm mr-2"></i>
-                    <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">${game.league}</span>
+                <div class="bg-white bg-opacity-10 p-3 rounded-lg border border-white border-opacity-20 backdrop-blur-sm">
+                    <p class="text-xs text-white text-opacity-70 font-medium uppercase mb-1">Prediction</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-extrabold text-white">${game.prediction}</span>
+                        <span class="text-xl font-extrabold text-yellow-300">@${game.odds}</span>
+                    </div>
                 </div>
-                <div class="flex items-center">
-                    ${liveIndicator}
-                    <span class="text-sm font-bold text-gray-800 ml-2">${game.time}</span>
-                </div>
-            </div>
-            
-            <div class="flex items-center justify-center space-x-2 text-center my-3">
-                <div class="flex-1">
-                    <p class="font-bold text-lg text-gray-900">${game.teamA}</p>
-                    <p class="text-xs text-gray-500">Home</p>
-                </div>
-                <span class="text-sm font-extrabold text-red-500">VS</span>
-                <div class="flex-1">
-                    <p class="font-bold text-lg text-gray-900">${game.teamB}</p>
-                    <p class="text-xs text-gray-500">Away</p>
-                </div>
-            </div>
 
-            <div class="mt-4 pt-3 border-t border-dashed border-gray-200">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-600 font-semibold">Prediction:</span>
-                    <span class="text-base font-extrabold text-indigo-700">${game.prediction}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600 font-semibold">Odds:</span>
-                    <span class="text-base font-bold text-green-600">${game.odds}</span>
+                <div class="mt-3 flex justify-between items-center">
+                    <span class="text-sm font-bold px-3 py-1 rounded-full ${statusBadgeClass} shadow-md uppercase">
+                        ${game.status} ${game.score ? `(${game.score})` : ''}
+                    </span>
+                    <i class="fas fa-check-circle text-white text-xl"></i>
                 </div>
             </div>
-            
-            <div class="flex justify-between items-center mt-3 pt-3 border-t">
-                <span class="${statusClass} text-xs font-bold px-3 py-1 rounded-full uppercase shadow-md">${game.status}</span>
-                ${scoreDisplay}
-            </div>
-        </div>
-    `;
+        `;
+    }).join('');
 };
-
-
-/**
- * Renders a list of games for a specific category.
- * @param {string} category - The key in gamesData (e.g., 'free', 'topSecret').
- * @param {string} title - The title to display on the page.
- * @param {string} subtitle - The subtitle/description.
- * @param {string} cardGradientClass - Tailwind class for the main card appearance.
- * @returns {string} Full HTML content for the page.
- */
-const renderGameList = (category, title, subtitle, cardGradientClass) => {
-    const games = gamesData[category] || [];
-    
-    // Generate all game cards
-    const gameCards = games.map(game => createGameCard(game)).join('');
-
-    return `
-        <div class="max-w-xl mx-auto">
-            <div class="${cardGradientClass} text-white p-6 rounded-2xl shadow-xl mb-6">
-                <h2 class="text-3xl font-extrabold tracking-tight">${title}</h2>
-                <p class="text-sm mt-1 text-white opacity-90">${subtitle}</p>
-            </div>
-            
-            <div class="space-y-4">
-                ${games.length > 0 ? gameCards : '<p class="text-center text-gray-500 mt-10">No games available for this section yet.</p>'}
-            </div>
-        </div>
-    `;
-};
-
-
-// --- Specific View Functions ---
 
 const renderHome = () => {
     return `
-        <div class="max-w-2xl mx-auto text-center py-6">
-            <h2 class="text-3xl font-extrabold text-gray-800 mb-2">Welcome to FOOTBALL SIMPLE GAMES</h2>
-            <p class="text-gray-600 mb-8">Your source for simple, high-value football predictions and analysis.</p>
-
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="navigate('free-tips')" class="menu-btn card-gradient-free text-white p-6 rounded-2xl flex flex-col items-center justify-center hover:shadow-2xl hover:scale-[1.02] transition">
-                    <i class="fas fa-gift text-3xl mb-2"></i>
-                    <span class="text-lg font-extrabold">Free Tips</span>
-                    <span class="text-xs opacity-80">Daily picks for everyone</span>
-                </button>
-                <button onclick="navigate('ultimate')" class="menu-btn bg-slate-900 text-white p-6 rounded-2xl flex flex-col items-center justify-center hover:shadow-2xl hover:scale-[1.02] transition">
-                    <i class="fas fa-crown text-yellow-400 text-3xl mb-2"></i>
-                    <span class="text-lg font-extrabold">Ultimate VIP</span>
-                    <span class="text-xs opacity-80">Top premium selections</span>
-                </button>
-                <button onclick="navigate('over-under')" class="menu-btn card-gradient-ou text-white p-6 rounded-2xl flex flex-col items-center justify-center hover:shadow-2xl hover:scale-[1.02] transition">
-                    <i class="fas fa-chart-line text-3xl mb-2"></i>
-                    <span class="text-lg font-extrabold">Over/Under</span>
-                    <span class="text-xs opacity-80">Goal line predictions</span>
-                </button>
-                <button onclick="navigate('btts')" class="menu-btn bg-red-600 text-white p-6 rounded-2xl flex flex-col items-center justify-center hover:shadow-2xl hover:scale-[1.02] transition">
-                    <i class="fas fa-exchange-alt text-3xl mb-2"></i>
-                    <span class="text-lg font-extrabold">BTTS Bets</span>
-                    <span class="text-xs opacity-80">Both teams to score picks</span>
-                </button>
+        <div class="space-y-6">
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-xl text-white text-center fade-in">
+                <i class="fas fa-star text-4xl text-yellow-400 mb-3 animate-pulse"></i>
+                <h2 class="text-2xl font-bold mb-2">Welcome to FOOTBALL SIMPLE</h2>
+                <p class="text-white text-opacity-80">Your ultimate source for expert football predictions. Check out our free and VIP tips!</p>
             </div>
             
-            <div class="mt-8">
-                <button onclick="navigate('support')" class="bg-gray-700 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-gray-800 transition">
-                    Contact Support
+            <div class="bg-white p-5 rounded-2xl shadow-xl border-t-4 border-green-500 fade-in">
+                <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-gift text-green-500 mr-2"></i> Daily Free Tips Preview
+                </h3>
+                <p class="text-gray-600 mb-4">Get a taste of our quality analysis. Tap the menu to explore all sections.</p>
+                <a href="#" data-view="free-tips" class="nav-link text-center block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                    View Free Tips <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-xl border-t-4 border-yellow-500 fade-in">
+                <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-lock text-yellow-500 mr-2"></i> Access VIP Predictions
+                </h3>
+                <p class="text-gray-600 mb-4">Unlock Ultimate, Top Special, O/U, and BTTS VIP sections for premium picks.</p>
+                <button onclick="navigate('ultimate')" class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                    Unlock VIP Access <i class="fas fa-key ml-1"></i>
                 </button>
             </div>
         </div>
@@ -131,67 +82,155 @@ const renderHome = () => {
 };
 
 const renderFreeTips = () => {
-    return renderGameList('free', 'Free Daily Tips', 'Enjoy today\'s best free selections from our analysts.', 'card-gradient-free');
+    const games = gamesData.free;
+    const cards = renderGameCards(games, 'card-gradient-free');
+
+    return `
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2">Daily Free Tips</h2>
+            <p class="text-gray-600">A selection of today's best free predictions with competitive odds.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${cards}
+            </div>
+        </div>
+    `;
 };
 
+// --- VIP Views (Protected) ---
+
 const renderTopSecret = () => {
-    return renderGameList('topSecret', 'Top Secret VIP Access', 'The most exclusive and secured picks with maximum confidence.', 'bg-slate-900');
+    const games = gamesData.topSecret;
+    const cards = renderGameCards(games, 'card-gradient-ou'); // Using purple gradient for Top Special
+
+    return `
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                <i class="fas fa-lock text-red-500 mr-2"></i> Top Special VIP Picks
+            </h2>
+            <div class="bg-red-100 p-4 rounded-xl border border-red-300 text-red-700 font-semibold">
+                This exclusive section contains high-confidence bets with exceptional value.
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${cards}
+            </div>
+        </div>
+    `;
 };
 
 const renderUltimate = () => {
-    return renderGameList('ultimate', 'Ultimate VIP Selections', 'Our highest value tips, carefully researched for serious players.', 'bg-yellow-600');
+    const games = gamesData.ultimate;
+    const cards = renderGameCards(games, 'card-gradient-free'); // Using green gradient for Ultimate
+
+    return `
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                <i class="fas fa-crown text-yellow-500 mr-2"></i> Ultimate VIP Section
+            </h2>
+            <div class="bg-yellow-100 p-4 rounded-xl border border-yellow-300 text-yellow-700 font-semibold">
+                Our premium selection. These picks are based on extensive research and proprietary algorithms.
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${cards}
+            </div>
+        </div>
+    `;
 };
 
 const renderOverUnder = () => {
-    return renderGameList('overUnder', 'Over/Under Specialists', 'Precise predictions on total goals scored in a match.', 'card-gradient-ou');
+    const games = gamesData.overUnder;
+    const cards = renderGameCards(games, 'card-gradient-ou'); // Using purple gradient for O/U
+
+    return `
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                <i class="fas fa-chart-line text-blue-500 mr-2"></i> VIP Over/Under Tips
+            </h2>
+            <p class="text-gray-600">Expert predictions focused on total goals (Over/Under 2.5 or 3.5).</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${cards}
+            </div>
+        </div>
+    `;
 };
 
 const renderBTTS = () => {
-    return renderGameList('btts', 'Both Teams To Score (BTTS)', 'Focusing on matches where both sides are highly likely to find the net.', 'bg-red-600');
+    const games = gamesData.btts;
+    const cards = renderGameCards(games, 'card-gradient-free'); // Using green gradient for BTTS
+
+    return `
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                <i class="fas fa-exchange-alt text-green-500 mr-2"></i> VIP BTTS Bets
+            </h2>
+            <p class="text-gray-600">Predictions where both teams are expected to score (BTTS: Yes).</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${cards}
+            </div>
+        </div>
+    `;
 };
 
 const renderSupport = () => {
     return `
-        <div class="max-w-md mx-auto">
-            <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 fade-in">
-                <h2 class="text-2xl font-bold text-gray-800 mb-3 border-b pb-2">Support & Contact</h2>
-                <p class="text-gray-600 mb-6">Need help with your subscription or have a question about our picks? Contact us here.</p>
+        <div class="space-y-6 max-w-lg mx-auto p-4 bg-white rounded-xl shadow-lg fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                <i class="fas fa-life-ring text-blue-500 mr-2"></i> Contact Support
+            </h2>
+            <p class="text-gray-600">If you have any questions, payment issues, or need help with VIP access, please contact us directly.</p>
 
-                <div class="space-y-4">
-                    <!-- Telegram -->
-                    <a href="https://t.me/masterbetrealfixed" target="_blank" class="flex items-center p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition shadow-sm">
-                        <div class="text-2xl text-blue-500 mr-4">
-                            <i class="fab fa-telegram-plane"></i>
-                        </div>
-                        <div>
-                            <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Telegram Chat</div>
-                            <div class="font-bold text-gray-800 text-xs">@masterbetrealfixed</div>
-                        </div>
-                    </a>
+            <div class="space-y-4">
+                <a href="mailto:masterbetrealfixed@gmail.com" class="flex items-center p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition">
+                    <div class="bg-blue-500 p-3 rounded-full text-white mr-4 shadow-md">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Email Support</div>
+                        <div class="font-bold text-gray-800 text-sm">masterbetrealfixed@gmail.com</div>
+                    </div>
+                </a>
 
-                    <!-- WhatsApp -->
-                    <a href="https://wa.me/1234567890" target="_blank" class="flex items-center p-4 bg-green-50 border border-green-200 rounded-xl hover:bg-green-100 transition shadow-sm">
-                        <div class="text-2xl text-green-500 mr-4">
-                            <i class="fab fa-whatsapp"></i>
-                        </div>
-                        <div>
-                            <div class="text-[10px] text-green-600 font-bold uppercase tracking-wider">WhatsApp Line</div>
-                            <div class="font-bold text-gray-800 text-xs">+1 234 567 890</div>
-                        </div>
-                    </a>
-                    
-                    <!-- Email -->
-                    <a href="mailto:masterbetrealfixed@gmail.com" class="flex items-center p-4 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition shadow-sm">
-                        <div class="text-2xl text-red-500 mr-4">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div>
-                            <div class="text-[10px] text-red-600 font-bold uppercase tracking-wider">Email</div>
-                            <div class="font-bold text-gray-800 text-xs">masterbetrealfixed@gmail.com</div>
-                        </div>
-                    </a>
-
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Response Time</div>
+                    <p class="text-gray-700 text-sm">We aim to respond to all inquiries within 12 hours.</p>
                 </div>
+            </div>
+        </div>
+    `;
+};
+
+/**
+ * NEW VIEW: Privacy Policy
+ */
+const renderPrivacyPolicy = () => {
+    return `
+        <div class="space-y-6 max-w-2xl mx-auto p-4 bg-white rounded-xl shadow-lg fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 flex items-center">
+                <i class="fas fa-shield-alt text-green-500 mr-2"></i> Privacy Policy
+            </h2>
+            <p class="text-gray-600">
+                This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service.
+            </p>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-gray-800">1. Information Collection and Use</h3>
+                <p class="text-gray-700">
+                    We collect very limited information necessary for providing and improving the Service. This may include non-personally identifiable information such as usage data (e.g., which pages of our Service you visit) and device information.
+                </p>
+
+                <h3 class="text-xl font-bold text-gray-800">2. VIP Access Security</h3>
+                <p class="text-gray-700">
+                    VIP access is granted via a temporary password system. We do not store or process payment information or personal identification data for VIP access within this application. All VIP password attempts are checked locally against a set of predefined valid tokens.
+                </p>
+
+                <h3 class="text-xl font-bold text-gray-800">3. Cookies and Tracking</h3>
+                <p class="text-gray-700">
+                    We do not use tracking cookies or similar tracking technologies to track activity on our Service.
+                </p>
+
+                <h3 class="text-xl font-bold text-gray-800">4. Changes to This Privacy Policy</h3>
+                <p class="text-gray-700">
+                    We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.
+                </p>
             </div>
         </div>
     `;
