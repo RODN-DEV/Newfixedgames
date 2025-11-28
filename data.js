@@ -34,6 +34,26 @@ const gamesData = {
     ],
     topSecret: [
         {
+            league: "Segunda Division",
+            time: "19:00",
+            teamA: "Elche",
+            teamB: "Eldense",
+            prediction: "Home Win (1)", 
+            odds: "1.75",
+            status: "pending",
+            isLive: false
+        },
+        {
+            league: "Championship",
+            time: "13:30",
+            teamA: "Ipswich Town",
+            teamB: "Norwich",
+            prediction: "Over 2.5 Goals", 
+            odds: "1.88",
+            status: "pending",
+            isLive: false
+        },
+        {
             league: "Bosnia & Herz.",
             time: "14:00",
             teamA: "Romanija Pale",
@@ -53,19 +73,29 @@ const gamesData = {
             status: "won",
             isLive: false,
             score: "5:1"
-        },
-        {
-            league: "Premier League",
-            time: "16:00",
-            teamA: "Luton Town",
-            teamB: "Man City",
-            prediction: "Over 2.5 Goals", 
-            odds: "1.45",
-            status: "won",
-            isLive: false
         }
     ],
     ultimate: [
+        {
+            league: "Eredivisie",
+            time: "18:45",
+            teamA: "Zwolle",
+            teamB: "RKC Waalwijk",
+            prediction: "Home Win (1)", 
+            odds: "1.80",
+            status: "pending",
+            isLive: false
+        },
+        {
+            league: "Chilean Primera",
+            time: "23:00",
+            teamA: "Colo Colo",
+            teamB: "Everton",
+            prediction: "Over 2.5 Goals", 
+            odds: "1.95",
+            status: "pending",
+            isLive: false
+        },
         {
             league: "Champions League",
             time: "21:00",
@@ -88,95 +118,50 @@ const gamesData = {
             isLive: false,
             score: "1:3"
         },
-        {
-            league: "Champions League",
-            time: "21:00",
-            teamA: "Atlético Madrid",
-            teamB: "Inter",
-            prediction: "BTTS: Yes", 
-            odds: "1.70",
-            status: "won",
-            isLive: false,
-            score: "2:1"
-        },
-        {
-            league: "Champions League",
-            time: "21:00",
-            teamA: "Arsenal",
-            teamB: "Bayern Munich",
-            prediction: "BTTS: Yes", 
-            odds: "1.67",
-            status: "won",
-            isLive: false,
-            score: "3:1"
-        },
-        {
-            league: "Norwegian Div 2",
-            time: "17:00",
-            teamA: "Aalesund",
-            teamB: "Egersund",
-            prediction: "BTTS: Yes", 
-            odds: "1.67",
-            status: "won",
-            isLive: false,
-            score: "3:1"
-        },
-        {
-            league: "Swiss Super League",
-            time: "17:00",
-            teamA: "St. Gallen",
-            teamB: "Zurich",
-            prediction: "Home Win (1)", 
-            odds: "2.10",
-            status: "lost",
-            isLive: false,
-            score: "1:2"
-        },
     ],
     overUnder: [
         {
-            league: "La Liga",
-            time: "18:30",
-            teamA: "Real Madrid",
-            teamB: "Barcelona",
-            prediction: "Over 3.5 Goals", 
-            odds: "2.05",
+            league: "Premier League",
+            time: "19:30",
+            teamA: "Chelsea",
+            teamB: "Man City",
+            prediction: "Over 2.5 Goals", 
+            odds: "1.55",
             status: "pending",
             isLive: false
         },
         {
             league: "Serie A",
-            time: "20:00",
-            teamA: "Juventus",
-            teamB: "Napoli",
-            prediction: "Under 2.5 Goals", 
-            odds: "1.75",
-            status: "won",
-            isLive: false,
-            score: "1:0"
+            time: "21:00",
+            teamA: "AC Milan",
+            teamB: "Juventus",
+            prediction: "Under 3.5 Goals", 
+            odds: "1.65",
+            status: "pending",
+            isLive: false
         }
     ],
     btts: [
         {
             league: "Championship",
-            time: "19:45",
-            teamA: "Leeds United",
-            teamB: "Leicester City",
+            time: "20:00",
+            teamA: "Leicester City",
+            teamB: "Sunderland",
             prediction: "BTTS: Yes", 
-            odds: "1.80",
+            odds: "1.70",
             status: "pending",
             isLive: true
         },
         {
-            league: "MLS",
-            time: "02:30",
-            teamA: "LA Galaxy",
-            teamB: "LAFC",
+            league: "Serie A",
+            time: "18:30",
+            teamA: "AS Roma",
+            teamB: "Atalanta",
             prediction: "BTTS: Yes", 
-            odds: "1.55",
-            status: "lost",
+            odds: "1.85",
+            status: "won",
             isLive: false,
-            score: "1:0"
+            score: "2:1"
         }
     ]
 };
