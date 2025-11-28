@@ -20,12 +20,13 @@ const headerTitle = document.getElementById('header-title');
 const validPasswords = ['12300', '12400', '12500'];
 const menuItems = [
     { view: 'home', title: 'Home', icon: 'fas fa-home', isVip: false },
-    { view: 'free-tips', title: 'Free Daily Tips', icon: 'fas fa-gift', isVip: false },
-    { view: 'top-secret', title: 'Top Secret VIP', icon: 'fas fa-lock', isVip: true },
+    { view: 'free-tips', title: 'Daily Free Tips', icon: 'fas fa-gift', isVip: false },
     { view: 'ultimate', title: 'Ultimate VIP', icon: 'fas fa-crown', isVip: true },
-    { view: 'over-under', title: 'Over/Under', icon: 'fas fa-chart-line', isVip: true },
-    { view: 'btts', title: 'BTTS Bets', icon: 'fas fa-exchange-alt', isVip: true },
-    { view: 'support', title: 'Support & Contact', icon: 'fas fa-life-ring', isVip: false }
+    { view: 'top-secret', title: 'Top Special VIP', icon: 'fas fa-lock', isVip: true },
+    { view: 'over-under', title: 'VIP O/U Tips', icon: 'fas fa-chart-line', isVip: true },
+    { view: 'btts', title: 'VIP BTTS Tips', icon: 'fas fa-exchange-alt', isVip: true },
+    { view: 'support', title: 'Contact Support', icon: 'fas fa-life-ring', isVip: false },
+    { view: 'privacy-policy', title: 'Privacy Policy', icon: 'fas fa-shield-alt', isVip: false }
 ];
 
 let currentView = 'home';
@@ -45,7 +46,11 @@ const openDrawer = () => {
     overlay.classList.remove('hidden');
 };
 
-const updateNavLinks = () => {
+/**
+ * Populates the navigation drawer with links based on the menuItems array.
+ * This also attaches the necessary click listeners for navigation.
+ */
+const populateNavigationDrawer = () => {
     navLinksDiv.innerHTML = menuItems.map(item => `
         <a href="#" data-view="${item.view}" class="nav-link text-white text-opacity-80 hover:text-white hover:bg-slate-700 p-3 rounded-lg font-semibold transition flex items-center">
             <i class="${item.icon} w-5 mr-3 ${item.isVip && !isAuthenticated ? 'text-yellow-500' : ''}"></i>
@@ -102,58 +107,19 @@ const navigate = (view) => {
         case 'over-under': contentDiv.innerHTML = renderOverUnder(); break;
         case 'btts': contentDiv.innerHTML = renderBTTS(); break;
         case 'support': contentDiv.innerHTML = renderSupport(); break;
+        case 'privacy-policy': contentDiv.innerHTML = renderPrivacyPolicy(); break; // NEW VIEW
         default: contentDiv.innerHTML = renderHome();
     }
     
-    // Update navigation links to reflect new auth state (e.g., locking)
-    updateNavLinks();
+    // Update navigation links to reflect new auth state (e.g., unlocking VIP sections)
+    populateNavigationDrawer();
 };
 
 // --- Event Listeners and Initialization ---
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initial content and navigation setup
-    updateNavLinks();
-    navigate('home'); // Load the home view initially
-
-    // Drawer toggles
-    document.getElementById('menu-toggle').addEventListener('click', openDrawer);
-    document.getElementById('close-drawer').addEventListener('click', closeDrawer);
-    overlay.addEventListener('click', closeDrawer);
-
-    // Password modal handlers
-    submitPasswordBtn.addEventListener('click', () => {
-        const password = passwordInput.value.trim();
-        
-        if (validPasswords.includes(password)) {
-            isAuthenticated = true;
-            passwordModal.classList.add('hidden');
-            // Navigate to the view that was blocked
-            navigate(currentView); 
-        } else {
-            passwordError.classList.remove('hidden');
-            passwordInput.value = ''; // Clear input on error
-        }
-    });
-
-    cancelPasswordBtn.addEventListener('click', () => {
-        passwordModal.classList.add('hidden');
-        // If cancelled, return to the home screen
-        currentView = 'home';
-        navigate('home');
-    });
-
-    passwordInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            submitPasswordBtn.click();
-        }
-    });
-});
-// --- Event Listeners and Initialization ---
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Initial content and navigation setup
-    updateNavLinks();
+    populateNavigationDrawer();
     navigate('home'); // Load the home view initially
 
     // Drawer toggles
